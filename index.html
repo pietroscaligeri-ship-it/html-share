@@ -666,7 +666,8 @@ function nFiltered(){
   const {gBrand}=getGF();
   return D.timeline.filter(r=>{
     if(from&&r.date<from)return false; if(to&&r.date>to)return false;
-    if(!nActiveSrcs.has(r.source))return false; if(cat&&!r.category.includes(cat))return false;
+    const src = r.source === 'Autotuner News' ? 'Autotuner (News)' : r.source === 'Autotuner Changelog' ? 'Autotuner (Changelog)' : r.source;
+if(!nActiveSrcs.has(src))return false; if(cat&&!r.category.includes(cat))return false;
     if(gBrand&&!(r.title||'').toLowerCase().includes(gBrand)&&!(r.excerpt||'').toLowerCase().includes(gBrand))return false;
     return true;
   });
