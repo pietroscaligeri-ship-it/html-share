@@ -840,7 +840,7 @@ function fbRender(){
 
 function fbRenderMetrics(){
   const tot=D.upvoty.length,votes=D.upvoty.reduce((a,b)=>a+b.votes,0),comm=D.upvoty.reduce((a,b)=>a+b.comments_count,0),proto=D.upvoty.filter(r=>r.board.includes('Protocol')).length;
-  const cov=(D.stats&&D.stats.upvoty_coverage)||{};
+  const cov={}; (D.sources||[]).forEach(function(s){   cov[s] = (D.upvoty||[]).filter(function(fb){ return fb.ecu_coverage&&fb.ecu_coverage[s]; }).length; });
   document.getElementById('fb-metrics').innerHTML=`
     <div class="mc"><div class="mc-lbl"><i class="ti ti-messages"></i>Feedback totali</div><div class="mc-val">${tot}</div><div class="mc-sub">su Upvoty Autotuner</div></div>
     <div class="mc"><div class="mc-lbl"><i class="ti ti-thumb-up"></i>Voti totali</div><div class="mc-val" style="color:var(--magic)">${votes.toLocaleString()}</div><div class="mc-sub">su tutti i feedback</div></div>
