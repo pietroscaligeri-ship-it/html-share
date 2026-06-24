@@ -726,7 +726,7 @@ function initAlert(){
 function vGetFiltered(){
   const source=document.getElementById('v-source').value,brand=document.getElementById('v-brand').value,ecumaker=document.getElementById('v-ecumaker').value,ecumodel=document.getElementById('v-ecumodel').value.toLowerCase().trim(),conn=document.getElementById('v-conn').value.toUpperCase();
   return D.vehicles.filter(r=>{
-    if(source&&r.source!==source)return false; if(brand&&r.brand.toLowerCase()!==brand)return false;
+    if(source&&r._source!==source)return false; if(brand&&r.brand.toLowerCase()!==brand)return false;
     if(ecumaker&&r.ecu_maker.toLowerCase()!==ecumaker)return false; if(ecumodel&&!r.ecu_model.toLowerCase().includes(ecumodel))return false;
     if(conn&&!r.connection_modes.toUpperCase().includes(conn))return false;
     return true;
