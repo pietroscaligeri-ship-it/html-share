@@ -1051,8 +1051,6 @@ loadData().then(function(data){
 
 function initDashboard(data){
   D = data;
-  document.getElementById('updated-date').textContent = D.stats.updated_at;
-  document.getElementById('veh-updated-sub').textContent = 'Aggiornata al ' + D.stats.updated_at;
 
   // Popola filtri globali
   var es = document.getElementById('g-ecumaker');
