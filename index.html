@@ -693,7 +693,7 @@ function nRender(){
   const labels=[...new Set(data.map(r=>fmt(r.date)))].sort();
   const cc=getCC();
   if(nChart)nChart.destroy();
-  nChart=new Chart(document.getElementById('n-chart'),{type:'line',data:{labels,datasets:[...nActiveSrcs].map(s=>({label:s,data:labels.map(l=>data.filter(r=>r.source===s&&fmt(r.date)===l).length),borderColor:srcColor(s),backgroundColor:srcColor(s)+'22',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.3,fill:false}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:cc.tick,autoSkip:true,maxRotation:45,font:{size:11}},grid:{color:cc.grid}},y:{ticks:{color:cc.tick,stepSize:1},grid:{color:cc.grid},beginAtZero:true}}}});
+  nChart=new Chart(document.getElementById('n-chart'),{type:'line',data:{labels,datasets:[...nActiveSrcs].map(s=>({label:s,data:labels.map(l=>data.filter(r=>{   const ns=r.source==='Autotuner News'?'Autotuner (News)':r.source==='Autotuner Changelog'?'Autotuner (Changelog)':r.source;   return ns===s&&fmt(r.date)===l; }).length),borderColor:srcColor(s),backgroundColor:srcColor(s)+'22',borderWidth:2,pointRadius:3,pointHoverRadius:5,tension:.3,fill:false}))},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:cc.tick,autoSkip:true,maxRotation:45,font:{size:11}},grid:{color:cc.grid}},y:{ticks:{color:cc.tick,stepSize:1},grid:{color:cc.grid},beginAtZero:true}}}});
   const sorted=[...data].sort((a,b)=>b.date.localeCompare(a.date));
   document.getElementById('n-tbl-count').textContent=`${sorted.length} rilasci`;
   renderNTable(sorted);
