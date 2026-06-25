@@ -248,7 +248,7 @@ body.light .fb-sent{background:#e8f8ee;color:#1a7a50}
   <div class="logo">MAGICMOTORSPORT</div>
   <div>
     <div class="hdr-title">Competitive Intelligence</div>
-    <div class="hdr-sub">Dashboard di analisi competitiva</div>
+    <div class="hdr-sub">Dashboard di analisi competitiva &nbsp;·&nbsp; <span style="color:var(--text-faint)">v4.0</span> &nbsp;·&nbsp; Aggiornata al <span id="header-updated-date">—</span></div>
   </div>
   <div class="hdr-right">
     <div class="updated-badge"><i class="ti ti-refresh" style="font-size:13px"></i>Aggiornata al <span id="updated-date">—</span></div>
@@ -286,6 +286,11 @@ body.light .fb-sent{background:#e8f8ee;color:#1a7a50}
 
 <!-- ═══ TAB NEWS ═══ -->
 <div id="tab-news" class="tab active">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:12px;color:var(--text-faint)">
+    <i class="ti ti-clock" style="font-size:13px"></i>
+    News aggiornate <strong style="color:var(--text-dim)">settimanalmente</strong>
+    &nbsp;·&nbsp; Ultimo aggiornamento: <span id="tab1-updated" style="color:var(--text-dim)">—</span>
+  </div>
   <div class="ctrl-box">
     <div class="ctrl-row">
       <div>
@@ -367,9 +372,10 @@ body.light .fb-sent{background:#e8f8ee;color:#1a7a50}
 
 <!-- ═══ TAB VEHICLES ═══ -->
 <div id="tab-vehicles" class="tab">
-  <div style="margin-bottom:6px;font-size:13px;color:var(--text-faint)">
-    ECU List — Copertura completa MAGICMOTORSPORT &amp; Competitor &nbsp;·&nbsp;
-    <span id="veh-updated-sub"></span>
+ <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:12px;color:var(--text-faint)">
+    <i class="ti ti-clock" style="font-size:13px"></i>
+    Dati ECU e Gap Analysis aggiornati <strong style="color:var(--text-dim)">mensilmente</strong>
+    &nbsp;·&nbsp; Ultimo aggiornamento: <span id="tab2-updated" style="color:var(--text-dim)">—</span>
   </div>
   <div class="sub-nav">
     <button class="sub-btn active" onclick="showSubView('ecu-list',this)"><i class="ti ti-database" style="font-size:14px"></i>ECU List totale</button>
@@ -462,6 +468,11 @@ body.light .fb-sent{background:#e8f8ee;color:#1a7a50}
 
 <!-- ═══ TAB FEEDBACK ═══ -->
 <div id="tab-feedback" class="tab">
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;font-size:12px;color:var(--text-faint)">
+    <i class="ti ti-clock" style="font-size:13px"></i>
+    Feedback Upvoty aggiornati <strong style="color:var(--text-dim)">settimanalmente</strong>
+    &nbsp;·&nbsp; Ultimo aggiornamento: <span id="tab3-updated" style="color:var(--text-dim)">—</span>
+  </div>
   <div class="metrics" id="fb-metrics"></div>
   <div class="ctrl-box">
     <div class="ctrl-row">
@@ -1055,7 +1066,34 @@ loadData().then(function(data){
 
 function initDashboard(data){
   D = data;
-    
+
+  // Set date spans
+  var _upd = (D.stats&&D.stats.updated_at)||'—';
+  ['updated-date','header-updated-date','tab1-updated','tab2-updated','tab3-updated'].forEach(function(id){
+    var el = document.getElementById(id); if(el) el.textContent = _upd;
+  });
+
+  // ── ECU COVERAGE PER FEEDBACK (calcolato client-side) ────────
+  var _BL = new Set(['ECM','TCM','TCU','ECU','OBD','CAN','DSG','CVT','AMT','DCT','PDK','DME','DDE','MSA','MSS','MSE','BENCH','BOOT']);
+  var _ecuBySrc = {};
+  (D.sources||[]).forEach(function(s){
+    _ecuBySrc[s] = (D.vehicles||[]).filter(function(v){ return v._source===s; }).map(function(v){ return (v.ecu_model||'').toUpperCase(); });
+  });
+  (D.upvoty||[]).forEach(function(fb){
+    var text = ((fb.title||'')+' '+(fb.content||'')).toUpperCase();
+    var words = text.match(/[A-Z0-9][A-Z0-9.\-_]{2,}/g)||[];
+    var cov = {};
+    (D.sources||[]).forEach(function(s){
+      cov[s] = words.some(function(w){
+        w = w.replace(/^[.,\-()+]+|[.,\-()+]+$/g,'');
+        if(w.length<3||_BL.has(w)) return false;
+        return _ecuBySrc[s].some(function(e){ return e===w||e.indexOf(w)>=0||w.indexOf(e)>=0; });
+      });
+    });
+    fb.ecu_coverage = cov;
+    fb.has_any_coverage = Object.values(cov).some(function(v){ return v; });
+  });
+
   // Popola filtri globali
   var es = document.getElementById('g-ecumaker');
   es.innerHTML = '<option value="">Tutti gli ECU maker</option>';
