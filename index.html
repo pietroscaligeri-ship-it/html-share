@@ -724,6 +724,9 @@ function renderNTable(rows){
 
 function initAlert(){
   const box=document.getElementById('alert-box');
+  const cutoff=new Date(Date.now()-7*86400000);
+  D.recent=(D.timeline||[]).filter(r=>r.date&&new Date(r.date+'T00:00:00')>=cutoff)
+    .sort((a,b)=>b.date.localeCompare(a.date));
   if(!D.recent||!D.recent.length){box.innerHTML=`<div class="alert-header"><i class="ti ti-bell"></i>Novità ultimi 7 giorni</div><div style="font-size:13px;color:#3a6a3a">Nessun nuovo rilascio negli ultimi 7 giorni.</div>`;return;}
   box.innerHTML=`<div class="alert-header"><i class="ti ti-bell"></i>Novità ultimi 7 giorni — ${D.recent.length} rilasci</div>`+D.recent.map(r=>`
     <div class="alert-item">
